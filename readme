@@ -1,0 +1,52 @@
+const phases = [
+    { name: "Menstrual Phase", days: 5 },
+    { name: "Follicular Phase", days: 14 },
+    { name: "Ovulatory Phase", days: 2 },
+    { name: "Luteal Phase", days: 14 }
+];
+
+let periodStartDate = null;
+
+document.getElementById('track-button').addEventListener('click', () => {
+    const startDate = new Date(document.getElementById('start-date').value);
+    if (startDate) {
+        periodStartDate = startDate;
+        displayCalendar(periodStartDate);
+        displayPhaseInfo(periodStartDate);
+    }
+});
+
+function displayCalendar(startDate) {
+    const calendarDiv = document.getElementById('calendar');
+    calendarDiv.innerHTML = ''; // Clear previous calendar
+    const monthDays = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0).getDate();
+    for (let i = 1; i <= monthDays; i++) {
+        const date = new Date(startDate.getFullYear(), startDate.getMonth(), i);
+        const dayDiv = document.createElement('div');
+        dayDiv.textContent = i;
+        dayDiv.classList.add('day');
+        if (date >= startDate && date < new Date(startDate.getTime() + (phases[0].days * 24 * 60 * 60 * 1000))) {
+            dayDiv.style.backgroundColor = 'lightcoral'; // Menstrual Phase
+        }
+        calendarDiv.appendChild(dayDiv);
+    }
+}
+
+function displayPhaseInfo(startDate) {
+    let currentDay = startDate.getDate();
+    let phaseIndex = 0;
+
+    let phaseInfoDiv = document.getElementById('phase-info');
+    phaseInfoDiv.innerHTML = ''; // Clear previous phase info
+
+    while (phaseIndex < phases.length) {
+        const phase = phases[phaseIndex];
+        const phaseEndDay = currentDay + phase.days;
+        const phaseDiv = document.createElement('div');
+        phaseDiv.classList.add('phase');
+        phaseDiv.innerHTML = <strong>${phase.name}:</strong> Days ${currentDay} to ${phaseEndDay};
+        phaseInfoDiv.appendChild(phaseDiv);
+        currentDay += phase.days;
+        phaseIndex++;
+    }
+}
